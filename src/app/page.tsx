@@ -54,9 +54,7 @@ interface Conversation {
 }
 
 // Dummy conversations data
-// @ts-ignore
-// @ts-nocheck
-export const conversations: Conversation[] = [
+const conversations: Conversation[] = [
   {
     last_active_datetime: "2024-11-25T09:00:00.000000Z",
     messages: [
