@@ -99,18 +99,32 @@ export default function ChatBot() {
 
   const getMessageBySession = async () => {
     try {
-
       const res = await axios.get(
         `http://localhost:5088/conversation/session?session_id=${conversationId}`
       );
-      console.log("res", res);
+      console.log("Backend response:", res.data);
+  
+      // Transform backend data to match the `Message` interface
+      const transformedMessages: Message[] = res.data.map((msg: any) => [
+        {
+          sender: "user",
+          content: msg.user_query,
+        },
+        {
+          sender: "bot",
+          content: msg.ai_response,
+          meta_data: msg.meta_data, // Pass metadata for cards
+        },
+      ]).flat(); // Flatten the array to create a single list
+  
+      setMessages(transformedMessages);
     } catch (error) {
-      console.error("error in getting message", error);
-    }finally{
-      setIsMessageLoading(false); // Trigger skeleton loading
-
+      console.error("Error fetching messages:", error);
+    } finally {
+      setIsMessageLoading(false);
     }
   };
+  
 
   useEffect(() => {
     setIsMessageLoading(true); // Trigger skeleton loading
