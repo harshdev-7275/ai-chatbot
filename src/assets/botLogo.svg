@@ -1,0 +1,53 @@
+<svg
+   width="109.94066"
+   height="109.94024"
+   viewBox="0 0 109.94066 109.94024"
+   version="1.1"
+   id="svg1"
+   inkscape:export-filename="48x48.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="px" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(30.970296,30.970114)">
+    <g
+       id="g4-9-4-3-7"
+       transform="matrix(1.3783653,1.413151,-1.413151,1.3783653,208.04424,-503.67779)"
+       style="display:inline">
+      <path
+         style="fill:#99c5ff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.0830001;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+         d="m 143.52769,236.11467 1e-5,29.64452 -29.64449,-2e-5 v 4.83886 0 l 34.39679,0.0587 0.0587,-34.54203 -4.84034,-4.81101 z"
+         id="path1-8-1-0-3" />
+      <path
+         style="fill:#1c80ff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.0830001;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+         d="m 108.98565,236.11469 h 29.64452 l -2e-5,29.64447 h 4.83886 v 0 l 0.0587,-34.39678 -4.89754,-0.008 -29.64449,-0.0504 -4.81101,4.84034 z"
+         id="path2-0-1-5-2" />
+      <path
+         style="fill:#99c5ff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.0830001;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+         d="m 108.98569,270.65673 v -29.64452 l 29.64447,2e-5 v -4.83886 0 l -34.39678,-0.0587 -0.008,4.89754 -0.0504,29.64449 4.84034,4.81101 z"
+         id="path3-0-0-6-7" />
+      <path
+         style="fill:#1c80ff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.0830001;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+         d="m 143.52771,270.65669 h -29.64452 l 2e-5,-29.64447 h -4.83886 v 0 l -0.0587,34.39678 4.89754,0.008 29.64449,0.0504 4.81101,-4.84034 z"
+         id="path4-3-4-5-8" />
+    </g>
+  </g>
+</svg>

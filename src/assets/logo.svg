@@ -1,0 +1,72 @@
+<svg
+   width="56.287128mm"
+   height="13.297568mm"
+   viewBox="0 0 56.287129 13.297568"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="horizontal-logo-inkscape.svg"
+   inkscape:export-filename="Horizontal\horizontal-logo-pdf.pdf"
+   inkscape:export-xdpi="179.32784"
+   inkscape:export-ydpi="179.32784"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.2702388"
+     inkscape:cx="60.618523"
+     inkscape:cy="98.406693"
+     inkscape:window-width="1280"
+     inkscape:window-height="698"
+     inkscape:window-x="-6"
+     inkscape:window-y="-6"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg1" />
+  <defs
+     id="defs1" />
+  <g
+     id="layer1"
+     transform="translate(-38.109463,-99.807526)">
+    <g
+       id="g4-9-4-3-7"
+       transform="matrix(0.1664385,0.17063891,-0.17063891,0.1664385,66.970626,42.727767)"
+       style="display:inline">
+      <path
+         style="fill:#99c5ff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.0830001;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+         d="m 143.52769,236.11467 1e-5,29.64452 -29.64449,-2e-5 v 4.83886 0 l 34.39679,0.0587 0.0587,-34.54203 -4.84034,-4.81101 z"
+         id="path1-8-1-0-3" />
+      <path
+         style="fill:#1c80ff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.0830001;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+         d="m 108.98565,236.11469 h 29.64452 l -2e-5,29.64447 h 4.83886 v 0 l 0.0587,-34.39678 -4.89754,-0.008 -29.64449,-0.0504 -4.81101,4.84034 z"
+         id="path2-0-1-5-2" />
+      <path
+         style="fill:#99c5ff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.0830001;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+         d="m 108.98569,270.65673 v -29.64452 l 29.64447,2e-5 v -4.83886 0 l -34.39678,-0.0587 -0.008,4.89754 -0.0504,29.64449 4.84034,4.81101 z"
+         id="path3-0-0-6-7" />
+      <path
+         style="fill:#1c80ff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.0830001;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+         d="m 143.52771,270.65669 h -29.64452 l 2e-5,-29.64447 h -4.83886 v 0 l -0.0587,34.39678 4.89754,0.008 29.64449,0.0504 4.81101,-4.84034 z"
+         id="path4-3-4-5-8" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.2889px;font-family:Poppins;-inkscape-font-specification:'Poppins, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#1c80ff;fill-opacity:1;stroke:#1c80ff;stroke-width:0.6;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:fill markers stroke"
+       x="53.975842"
+       y="109.86998"
+       id="text5-6-55"><tspan
+         id="tspan5-0-0"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.2889px;font-family:Poppins;-inkscape-font-specification:'Poppins, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#1c80ff;fill-opacity:1;stroke:#1c80ff;stroke-width:0.6;stroke-dasharray:none;stroke-opacity:1"
+         x="53.975842"
+         y="109.86998">OptioAI</tspan></text>
+  </g>
+</svg>
