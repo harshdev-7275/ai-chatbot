@@ -14,11 +14,27 @@ import { RespondQuery } from "@/helper/constant";
 import optAiLogo from "@/assets/optAiLogo.png";
 import useConversationStore from "@/store/useConversationStore";
 import { Skeleton } from "@/components/ui/skeleton";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
+import DynamicCard from "@/components/DynamicCard";
 
 interface Message {
   sender: "user" | "bot";
   content: string;
+  meta_data?: {
+    cards: [
+      {
+        cardTitle: string;
+        submissionEndpoint: string;
+        fields: [
+          {
+            heading: string;
+            content: string;
+          }
+        ];
+      }
+    ];
+  };
   isStreaming?: boolean;
 }
 
@@ -81,18 +97,26 @@ export default function ChatBot() {
   const [isMessageLoading, setIsMessageLoading] = useState(true);
   console.log("hello", conversationId);
 
+  const getMessageBySession = async () => {
+    try {
+
+      const res = await axios.get(
+        `http://localhost:5088/conversation/session?session_id=${conversationId}`
+      );
+      console.log("res", res);
+    } catch (error) {
+      console.error("error in getting message", error);
+    }finally{
+      setIsMessageLoading(false); // Trigger skeleton loading
+
+    }
+  };
+
   useEffect(() => {
     setIsMessageLoading(true); // Trigger skeleton loading
-    const timer = setTimeout(() => {
-      setIsMessageLoading(false); // Stop skeleton loading after 2 seconds
-    }, 2000);
-    return () => clearTimeout(timer);
+    getMessageBySession();
   }, [conversationId]);
-  
-  
 
-
-  
   // useEffect(() => {
   //   const fetchConversation = async () => {
   //     // Fetch the conversation data asynchronously
@@ -112,7 +136,7 @@ export default function ChatBot() {
 
     if (conversation) {
       // Transform the conversation messages to match the Message[] format
-      const transformedMessages:any = conversation.messages
+      const transformedMessages: any = conversation.messages
         .map((msg) => [
           { sender: "user", content: msg.user_query },
           { sender: "bot", content: msg.ai_response },
@@ -184,12 +208,13 @@ export default function ChatBot() {
       sender: "bot",
       content: "Hello, how can I help you today?",
     },
-  ]
+  ];
 
   async function getBotResponse(
     message: string,
     isNewConversation: boolean,
-    onMessageChunk: (chunk: string) => void
+    onMessageChunk: (chunk: string) => void,
+    onCardsReceived?: (cards: any[]) => void
   ): Promise<void> {
     try {
       console.log("message", isNewConversation);
@@ -197,16 +222,12 @@ export default function ChatBot() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-
-  session_id: uuidv4(),
-  user_id: "user123",
-  query: message,
-  fixed_data: {
-    token: "optional-token"
-  }
-
-
-
+          session_id: conversationId,
+          user_id: "user123",
+          query: message,
+          fixed_data: {
+            token: "optional-token",
+          },
 
           // fixed_data: { user_id: "rooms@atithipondicherry.com" },
           // query: message,
@@ -231,16 +252,26 @@ export default function ChatBot() {
         buffer = lines.pop() || ""; // Preserve incomplete line
 
         lines.forEach((line) => {
-          if (line.startsWith("data: ") && line.includes("message_chunk")) {
+          if (line.startsWith("data: ")) {
             const data = line.slice(6).trim();
             if (data) {
               try {
                 const parsedData = JSON.parse(data);
+
+                // Handle message chunks
                 if (parsedData.message_chunk) {
                   onMessageChunk(parsedData.message_chunk);
                 }
+
+                // Handle cards in metadata
+                if (parsedData.meta_data?.cards) {
+                  const cards = parsedData.meta_data.cards;
+                  if (onCardsReceived) {
+                    onCardsReceived(cards);
+                  }
+                }
               } catch (error) {
-                console.error("Error parsing message chunk:", error);
+                console.error("Error parsing response:", error);
               }
             }
           }
@@ -252,105 +283,171 @@ export default function ChatBot() {
     }
   }
 
+  // async function getBotResponse(
+  //   message: string,
+  //   isNewConversation: boolean,
+  //   onMessageChunk: (chunk: string) => void
+  // ): Promise<void> {
+  //   try {
+  //     console.log("message", isNewConversation);
+  //     const response = await fetch(RespondQuery, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         session_id: conversationId,
+  //         user_id: "user123",
+  //         query: message,
+  //         fixed_data: {
+  //           token: "optional-token",
+  //         },
+
+  //         // fixed_data: { user_id: "rooms@atithipondicherry.com" },
+  //         // query: message,
+  //         // reset: isNewConversation, // Conditionally set reset based on conversation state
+  //       }),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error("Failed to send the query");
+  //     }
+
+  //     const reader = response.body?.getReader();
+  //     const decoder = new TextDecoder();
+  //     let buffer = "";
+
+  //     while (true) {
+  //       const { done, value } = await reader!.read();
+  //       if (done) break;
+
+  //       buffer += decoder.decode(value, { stream: true });
+  //       const lines = buffer.split("\n");
+  //       buffer = lines.pop() || ""; // Preserve incomplete line
+
+  //       lines.forEach((line) => {
+  //         if (line.startsWith("data: ") && line.includes("message_chunk")) {
+  //           const data = line.slice(6).trim();
+  //           if (data) {
+  //             try {
+  //               const parsedData = JSON.parse(data);
+  //               if (parsedData.message_chunk) {
+  //                 onMessageChunk(parsedData.message_chunk);
+  //               }
+  //             } catch (error) {
+  //               console.error("Error parsing message chunk:", error);
+  //             }
+  //           }
+  //         }
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.error("Error with fetch:", error);
+  //     onMessageChunk("Error retrieving response.");
+  //   }
+  // }
+
   return (
-    <div className="flex flex-col items-center bg-[#131314] h-full w-full  p-4 overflow-hidden">
-   
-
-      <div className="w-full max-w-[900px] bg- container mx-auto mt-6 flex flex-col items-center">
-        <div className="flex-grow w-full overflow-y-auto scrollbar-hide space-y-4 h-[78vh] mb-4">
-          {
-            isMessageLoading ?(
-              skeletonMessages.map((msg, index)=>(
-                <div
-                    key={index}
-                    className={`flex ${
-                      msg.sender === "user" ? "justify-end" : "justify-start"
-                    }`}
-                  >
-                    <div
-                      className={`flex gap-2 ${
-                        msg.sender === "user"
-                          ? "flex-row-reverse items-start"
-                          : "items-end"
-                      }`}
-                    >
-                      {msg.sender === "user" ? (
-                        <User color="white" size={24} />
-                      ) : (
-                        <Image src={botLogo} alt="bot" width={24} height={24} />
-                      )}
-                      <div
-                        className={`p-2 rounded-lg max-w-[75%] ${
-                          msg.sender === "user"
-                            ? `bg-[#2F2F2F] text-white text-right`
-                            : "bg-[#2F2F2F] text-white text-left"
-                        }`}
-                      >
-                        <Skeleton className="h-4 w-[250px]"/>
-                      </div>
-                    </div>
-                  </div>
-              ))
-            ):
-            (
-              messages.length > 0 ? (
-                messages.map((msg, index) => (
-                  <div
-                    key={index}
-                    className={`flex ${
-                      msg.sender === "user" ? "justify-end" : "justify-start"
-                    }`}
-                  >
-                    <div
-                      className={`flex gap-2 ${
-                        msg.sender === "user"
-                          ? "flex-row-reverse items-start"
-                          : "items-end"
-                      }`}
-                    >
-                      {msg.sender === "user" ? (
-                        <User color="white" size={24} />
-                      ) : (
-                        <Image src={botLogo} alt="bot" width={24} height={24} />
-                      )}
-                      <div
-                        className={`p-2 rounded-lg max-w-[75%] ${
-                          msg.sender === "user"
-                            ? `bg-[#2F2F2F] text-white text-right`
-                            : "bg-[#2F2F2F] text-white text-left"
-                        }`}
-                      >
-                        <ReactMarkdown
-                          remarkPlugins={[remarkGfm]}
-                          components={CustomMarkdownComponents}
-                        >
-                          {msg.content}
-                        </ReactMarkdown>
-                      </div>
-                    </div>
-                  </div>
-                ))
+<div className="flex flex-col items-center bg-[#131314] h-full w-full p-4 overflow-hidden">
+  <div className="w-full max-w-[900px] container mx-auto mt-6 flex flex-col items-center">
+    <div className="flex-grow w-full overflow-y-auto scrollbar-hide space-y-4 h-[78vh] mb-4">
+      {isMessageLoading ? (
+        skeletonMessages.map((msg, index) => (
+          <div
+            key={index}
+            className={`flex ${
+              msg.sender === "user" ? "justify-end" : "justify-start"
+            }`}
+          >
+            <div
+              className={`flex gap-2 ${
+                msg.sender === "user"
+                  ? "flex-row-reverse items-start"
+                  : "items-end"
+              }`}
+            >
+              {msg.sender === "user" ? (
+                <User color="white" size={24} />
               ) : (
-                <div className="flex flex-col gap-4 items-center justify-center w-full h-[80%] mt-10 overflow-hidden">
-                  <Image src={optAiLogo} alt="bot" width={150} height={150} />
-                  <TypewriterText />
-                </div>
-              )
-            )
-          }
-       
-          <div ref={messagesEndRef} />
+                <Image src={botLogo} alt="bot" width={24} height={24} />
+              )}
+              <div
+                className={`p-2 rounded-lg max-w-[75%] ${
+                  msg.sender === "user"
+                    ? "bg-[#2F2F2F] text-white text-right"
+                    : "bg-[#2F2F2F] text-white text-left"
+                }`}
+              >
+                <Skeleton className="h-4 w-[250px]" />
+              </div>
+            </div>
+          </div>
+        ))
+      ) : messages.length > 0 ? (
+        messages.map((msg, index) => (
+          <div
+            key={index}
+            className={`flex ${
+              msg.sender === "user" ? "justify-end" : "justify-start"
+            }`}
+          >
+            <div
+              className={`flex gap-2 ${
+                msg.sender === "user"
+                  ? "flex-row-reverse items-start"
+                  : "items-end"
+              }`}
+            >
+              {msg.sender === "user" ? (
+                <User color="white" size={24} />
+              ) : (
+                <Image src={botLogo} alt="bot" width={24} height={24} />
+              )}
+              <div
+                className={`p-2 rounded-lg max-w-[75%] ${
+                  msg.sender === "user"
+                    ? "bg-[#2F2F2F] text-white text-right"
+                    : "bg-[#2F2F2F] text-white text-left"
+                }`}
+              >
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={CustomMarkdownComponents}
+                >
+                  {msg.content}
+                </ReactMarkdown>
+              </div>
+            </div>
+            <div>
+              <DynamicCard
+                cardTitle={
+                  msg.meta_data?.cards[0].cardTitle || "Default Title"
+                }
+                fields={
+                  msg.meta_data?.cards[0].fields?.length
+                    ? msg.meta_data?.cards[0].fields
+                    : [{ heading: "", content: "" }]
+                }
+              />
+            </div>
+          </div>
+        ))
+      ) : (
+        <div className="flex flex-col gap-4 items-center justify-center w-full h-[80%] mt-10 overflow-hidden">
+          <Image src={optAiLogo} alt="bot" width={150} height={150} />
+          <TypewriterText />
         </div>
-
-        <div className="w-full">
-          <MessageInput
-            onSend={handleSend}
-            disabled={isStreaming}
-            styles="bg-[#1E1F20] text-[#BBC3C2] w-full mx-auto px-4 py-3"
-            inputRef={inputRef}
-          />
-        </div>
-      </div>
+      )}
+      <div ref={messagesEndRef} />
     </div>
+    <div className="w-full">
+      <MessageInput
+        onSend={handleSend}
+        disabled={isStreaming}
+        styles="bg-[#1E1F20] text-[#BBC3C2] w-full mx-auto px-4 py-3"
+        inputRef={inputRef}
+      />
+    </div>
+  </div>
+</div>
+
   );
 }

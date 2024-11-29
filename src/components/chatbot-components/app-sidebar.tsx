@@ -14,6 +14,9 @@ import optAiLogo from "@/assets/optAiLogo.png";
 import Image from "next/image";
 import useConversationStore from "@/store/useConversationStore";
 import { v4 as uuidv4 } from "uuid";
+import { useEffect, useState } from "react";
+import { FetchAllConversation } from "@/helper/constant";
+import axios from "axios"
 
 interface Message {
   ai_response: string;
@@ -87,6 +90,7 @@ function categorizeConversations(conversations: Conversation[]): {
 }
 
 export function AppSidebar(): JSX.Element {
+  const [conversations, setConversations] =useState<Conversation[]>([])
   const { conversationId, setConversationId, clearConversationId } =
     useConversationStore();
 
@@ -98,6 +102,19 @@ export function AppSidebar(): JSX.Element {
     clearConversationId();
     setConversationId(uuidv4());
   };
+  const getAllConversations = async()=>{
+    try{
+
+        const res = await axios.get(`${FetchAllConversation}?user_id=user123`)
+        console.log("res", res)
+        setConversations(res.data)
+    }catch(error){
+      console.error("error while getting conversations", error)
+    }
+  }
+  useEffect(()=>{
+getAllConversations()
+  },[])
 
   return (
     <Sidebar className="!text-gray-100 w-64 z-[9999] " >
@@ -105,13 +122,7 @@ export function AppSidebar(): JSX.Element {
         {/* Header */}
         <SidebarGroupLabel className="flex items-start justify-items-start mt-2">
           {/* <SidebarGroupLabel className="text-white"></SidebarGroupLabel> */}
-          <Image
-            src={optAiLogo}
-            alt="logo"
-            width={100}
-            height={100}
-            className="ml-2 mt-2"
-          />
+         <h1 className="text-2xl font-bold text-blue-400 ">N+</h1>
         </SidebarGroupLabel>
 
         <SidebarMenu className="mt-4">
