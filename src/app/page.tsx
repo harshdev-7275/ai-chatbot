@@ -103,20 +103,22 @@ export default function ChatBot() {
         `http://localhost:5088/conversation/session?session_id=${conversationId}`
       );
       console.log("Backend response:", res.data);
-  
+
       // Transform backend data to match the `Message` interface
-      const transformedMessages: Message[] = res.data.map((msg: any) => [
-        {
-          sender: "user",
-          content: msg.user_query,
-        },
-        {
-          sender: "bot",
-          content: msg.ai_response,
-          meta_data: msg.meta_data, // Pass metadata for cards
-        },
-      ]).flat(); // Flatten the array to create a single list
-  
+      const transformedMessages: Message[] = res.data
+        .map((msg: any) => [
+          {
+            sender: "user",
+            content: msg.user_query,
+          },
+          {
+            sender: "bot",
+            content: msg.ai_response,
+            meta_data: msg.meta_data, // Pass metadata for cards
+          },
+        ])
+        .flat(); // Flatten the array to create a single list
+
       setMessages(transformedMessages);
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -124,7 +126,6 @@ export default function ChatBot() {
       setIsMessageLoading(false);
     }
   };
-  
 
   useEffect(() => {
     setIsMessageLoading(true); // Trigger skeleton loading
@@ -360,108 +361,114 @@ export default function ChatBot() {
   // }
 
   return (
-<div className="flex flex-col items-center bg-[#131314] h-full w-full p-4 overflow-hidden">
-  <div className="w-full max-w-[900px] container mx-auto mt-6 flex flex-col items-center">
-    <div className="flex-grow w-full overflow-y-auto scrollbar-hide space-y-4 h-[78vh] mb-4">
-      {isMessageLoading ? (
-        skeletonMessages.map((msg, index) => (
-          <div
-            key={index}
-            className={`flex ${
-              msg.sender === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
-            <div
-              className={`flex gap-2 ${
-                msg.sender === "user"
-                  ? "flex-row-reverse items-start"
-                  : "items-end"
-              }`}
-            >
-              {msg.sender === "user" ? (
-                <User color="white" size={24} />
-              ) : (
-                <Image src={botLogo} alt="bot" width={24} height={24} />
-              )}
+    <div className="flex flex-col items-center bg-[#131314] h-full w-full p-4 overflow-hidden">
+      <div className="w-full max-w-[900px] container mx-auto mt-6 flex flex-col items-center">
+        <div className="flex-grow w-full overflow-y-auto scrollbar-hide space-y-4 h-[78vh] mb-4">
+          {isMessageLoading ? (
+            skeletonMessages.map((msg, index) => (
               <div
-                className={`p-2 rounded-lg max-w-[75%] ${
-                  msg.sender === "user"
-                    ? "bg-[#2F2F2F] text-white text-right"
-                    : "bg-[#2F2F2F] text-white text-left"
+                key={index}
+                className={`flex ${
+                  msg.sender === "user" ? "justify-end" : "justify-start"
                 }`}
               >
-                <Skeleton className="h-4 w-[250px]" />
-              </div>
-            </div>
-          </div>
-        ))
-      ) : messages.length > 0 ? (
-        messages.map((msg, index) => (
-          <div
-            key={index}
-            className={`flex ${
-              msg.sender === "user" ? "justify-end" : "justify-start"
-            }`}
-          >
-            <div
-              className={`flex gap-2 ${
-                msg.sender === "user"
-                  ? "flex-row-reverse items-start"
-                  : "items-end"
-              }`}
-            >
-              {msg.sender === "user" ? (
-                <User color="white" size={24} />
-              ) : (
-                <Image src={botLogo} alt="bot" width={24} height={24} />
-              )}
-              <div
-                className={`p-2 rounded-lg max-w-[75%] ${
-                  msg.sender === "user"
-                    ? "bg-[#2F2F2F] text-white text-right"
-                    : "bg-[#2F2F2F] text-white text-left"
-                }`}
-              >
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  components={CustomMarkdownComponents}
+                <div
+                  className={`flex gap-2 ${
+                    msg.sender === "user"
+                      ? "flex-row-reverse items-start"
+                      : "items-end"
+                  }`}
                 >
-                  {msg.content}
-                </ReactMarkdown>
+                  {msg.sender === "user" ? (
+                    <User color="white" size={24} />
+                  ) : (
+                    // <Image src={botLogo} alt="bot" width={24} height={24} />
+                    <div className="text-blue-500 text-2xl font-bold">N+</div>
+                  )}
+                  <div
+                    className={`p-2 rounded-lg max-w-full ${
+                      msg.sender === "user"
+                        ? "bg-[#2F2F2F] text-white text-right"
+                        : "bg-[#2F2F2F] text-white text-left"
+                    }`}
+                  >
+                    <Skeleton className="h-4 w-[250px]" />
+                  </div>
+                </div>
               </div>
+            ))
+          ) : messages.length > 0 ? (
+            messages.map((msg, index) => (
+              <div
+                key={index}
+                className={`flex ${
+                  msg.sender === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
+                <div
+                  className={`flex gap-2 ${
+                    msg.sender === "user"
+                      ? "flex-row-reverse items-start"
+                      : "items-end"
+                  }`}
+                >
+                  {msg.sender === "user" ? (
+                    <User color="white" size={24} />
+                  ) : (
+                    // <Image src={botLogo} alt="bot" width={24} height={24} />
+                    <div className="text-blue-500 text-2xl font-bold">N+</div>
+                  )}
+                  <div className="flex flex-col gap-5">
+                    <div
+                      className={`p-2 rounded-lg max-w-full ${
+                        msg.sender === "user"
+                          ? "bg-[#2F2F2F] text-white text-right"
+                          : "bg-[#2F2F2F] text-white text-left"
+                      }`}
+                    >
+                      <ReactMarkdown
+                        remarkPlugins={[remarkGfm]}
+                        components={CustomMarkdownComponents}
+                      >
+                        {msg.content}
+                      </ReactMarkdown>
+                    </div>
+                    <div>
+                      {msg.meta_data?.cards && (
+                        <DynamicCard
+                          cardTitle={
+                            msg.meta_data?.cards[0].cardTitle || "Default Title"
+                          }
+                          fields={
+                            msg.meta_data?.cards[0].fields?.length
+                              ? msg.meta_data?.cards[0].fields
+                              : [{ heading: "", content: "" }]
+                          }
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="flex flex-col gap-4 items-center justify-center w-full h-[80%] mt-10 overflow-hidden">
+              {/* <Image src={optAiLogo} alt="bot" width={150} height={150} /> */}
+              <div className="text-blue-500 text-5xl font-bold">N+</div>
+              <TypewriterText />
             </div>
-            <div>
-              <DynamicCard
-                cardTitle={
-                  msg.meta_data?.cards[0].cardTitle || "Default Title"
-                }
-                fields={
-                  msg.meta_data?.cards[0].fields?.length
-                    ? msg.meta_data?.cards[0].fields
-                    : [{ heading: "", content: "" }]
-                }
-              />
-            </div>
-          </div>
-        ))
-      ) : (
-        <div className="flex flex-col gap-4 items-center justify-center w-full h-[80%] mt-10 overflow-hidden">
-          <Image src={optAiLogo} alt="bot" width={150} height={150} />
-          <TypewriterText />
+          )}
+          <div ref={messagesEndRef} />
         </div>
-      )}
-      <div ref={messagesEndRef} />
+        <div className="w-full">
+          <MessageInput
+            onSend={handleSend}
+            disabled={isStreaming}
+            styles="bg-[#1E1F20] text-[#BBC3C2] w-full mx-auto px-4 py-3"
+            inputRef={inputRef}
+          />
+        </div>
+      </div>
     </div>
-    <div className="w-full">
-      <MessageInput
-        onSend={handleSend}
-        disabled={isStreaming}
-        styles="bg-[#1E1F20] text-[#BBC3C2] w-full mx-auto px-4 py-3"
-        inputRef={inputRef}
-      />
-    </div>
-  </div>
-</div>
-
   );
 }
