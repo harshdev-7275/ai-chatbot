@@ -165,27 +165,32 @@ export default function ChatBot() {
       { sender: "bot", content: "", isStreaming: true },
     ]);
 
-    await getBotResponse(message, isNewConversation, (chunk) => {
-      streamingMessageRef.current += chunk;
-      setMessages((prevMessages) => {
-        const updatedMessages = [...prevMessages];
-        const lastMessage = updatedMessages[updatedMessages.length - 1];
-        if (lastMessage && lastMessage.isStreaming) {
-          lastMessage.content = streamingMessageRef.current;
-        }
-        return updatedMessages;
-      });
-      scrollToBottom();
-    }, (cards) => {
-      setMessages((prevMessages) => {
-        const updatedMessages = [...prevMessages];
-        const lastMessage = updatedMessages[updatedMessages.length - 1];
-        if (lastMessage && lastMessage.isStreaming) {
-          lastMessage.meta_data = { ...lastMessage.meta_data, cards };
-        }
-        return updatedMessages;
-      });
-    });
+    await getBotResponse(
+      message,
+      isNewConversation,
+      (chunk) => {
+        streamingMessageRef.current += chunk;
+        setMessages((prevMessages) => {
+          const updatedMessages = [...prevMessages];
+          const lastMessage = updatedMessages[updatedMessages.length - 1];
+          if (lastMessage && lastMessage.isStreaming) {
+            lastMessage.content = streamingMessageRef.current;
+          }
+          return updatedMessages;
+        });
+        scrollToBottom();
+      },
+      (cards: any) => {
+        setMessages((prevMessages) => {
+          const updatedMessages = [...prevMessages];
+          const lastMessage = updatedMessages[updatedMessages.length - 1];
+          if (lastMessage && lastMessage.isStreaming) {
+            lastMessage.meta_data = { ...lastMessage.meta_data, cards };
+          }
+          return updatedMessages;
+        });
+      }
+    );
 
     setMessages((prevMessages) => {
       const updatedMessages = [...prevMessages];
@@ -314,8 +319,11 @@ export default function ChatBot() {
                   {msg.sender === "user" ? (
                     <User color="white" size={24} />
                   ) : isStreaming ? (
-                    <div className="text-blue-500 text-2xl font-bold">
-                      N<span className="animate-spin">+</span>
+                    <div className="flex">
+                      <div className="text-blue-500 text-2xl font-bold">N</div>
+                      <div className="text-blue-500 text-2xl font-bold animate-spin">
+                        +
+                      </div>
                     </div>
                   ) : (
                     <div className="text-blue-500 text-2xl font-bold">N+</div>
@@ -350,8 +358,11 @@ export default function ChatBot() {
                   {msg.sender === "user" ? (
                     <User color="white" size={24} />
                   ) : isStreaming ? (
-                    <div className="text-blue-500 text-2xl font-bold">
-                      N<span className="animate-spin">+</span>
+                    <div className="flex">
+                      <div className="text-blue-500 text-2xl font-bold">N</div>
+                      <div className="text-blue-500 text-2xl font-bold animate-spin">
+                        +
+                      </div>
                     </div>
                   ) : (
                     <div className="text-blue-500 text-2xl font-bold">N+</div>
