@@ -132,17 +132,6 @@ export default function ChatBot() {
     getMessageBySession();
   }, [conversationId]);
 
-  // useEffect(() => {
-  //   const fetchConversation = async () => {
-  //     // Fetch the conversation data asynchronously
-  //     const response = await fetch(`/api/conversations/${conversationId}`);
-  //     const conversation = await response.json();
-  //     // Transform and set messages as before
-  //   };
-  //   fetchConversation();
-  // }, [conversationId]);
-
-  // New useEffect to listen for changes in conversationId
   useEffect(() => {
     // Find the conversation matching the current conversationId
     const conversation = conversations.find(
@@ -187,6 +176,15 @@ export default function ChatBot() {
         return updatedMessages;
       });
       scrollToBottom();
+    }, (cards) => {
+      setMessages((prevMessages) => {
+        const updatedMessages = [...prevMessages];
+        const lastMessage = updatedMessages[updatedMessages.length - 1];
+        if (lastMessage && lastMessage.isStreaming) {
+          lastMessage.meta_data = { ...lastMessage.meta_data, cards };
+        }
+        return updatedMessages;
+      });
     });
 
     setMessages((prevMessages) => {
@@ -243,10 +241,6 @@ export default function ChatBot() {
           fixed_data: {
             token: "optional-token",
           },
-
-          // fixed_data: { user_id: "rooms@atithipondicherry.com" },
-          // query: message,
-          // reset: isNewConversation, // Conditionally set reset based on conversation state
         }),
       });
 
@@ -298,68 +292,6 @@ export default function ChatBot() {
     }
   }
 
-  // async function getBotResponse(
-  //   message: string,
-  //   isNewConversation: boolean,
-  //   onMessageChunk: (chunk: string) => void
-  // ): Promise<void> {
-  //   try {
-  //     console.log("message", isNewConversation);
-  //     const response = await fetch(RespondQuery, {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({
-  //         session_id: conversationId,
-  //         user_id: "user123",
-  //         query: message,
-  //         fixed_data: {
-  //           token: "optional-token",
-  //         },
-
-  //         // fixed_data: { user_id: "rooms@atithipondicherry.com" },
-  //         // query: message,
-  //         // reset: isNewConversation, // Conditionally set reset based on conversation state
-  //       }),
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to send the query");
-  //     }
-
-  //     const reader = response.body?.getReader();
-  //     const decoder = new TextDecoder();
-  //     let buffer = "";
-
-  //     while (true) {
-  //       const { done, value } = await reader!.read();
-  //       if (done) break;
-
-  //       buffer += decoder.decode(value, { stream: true });
-  //       const lines = buffer.split("\n");
-  //       buffer = lines.pop() || ""; // Preserve incomplete line
-
-  //       lines.forEach((line) => {
-  //         if (line.startsWith("data: ") && line.includes("message_chunk")) {
-  //           const data = line.slice(6).trim();
-  //           if (data) {
-  //             try {
-  //               const parsedData = JSON.parse(data);
-  //               if (parsedData.message_chunk) {
-  //                 onMessageChunk(parsedData.message_chunk);
-  //               }
-  //             } catch (error) {
-  //               console.error("Error parsing message chunk:", error);
-  //             }
-  //           }
-  //         }
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.error("Error with fetch:", error);
-  //     onMessageChunk("Error retrieving response.");
-  //   }
-  // }
-
   return (
     <div className="flex flex-col items-center bg-[#131314] h-full w-full p-4 overflow-hidden">
       <div className="w-full max-w-[900px] container mx-auto mt-6 flex flex-col items-center">
@@ -381,8 +313,11 @@ export default function ChatBot() {
                 >
                   {msg.sender === "user" ? (
                     <User color="white" size={24} />
+                  ) : isStreaming ? (
+                    <div className="text-blue-500 text-2xl font-bold">
+                      N<span className="animate-spin">+</span>
+                    </div>
                   ) : (
-                    // <Image src={botLogo} alt="bot" width={24} height={24} />
                     <div className="text-blue-500 text-2xl font-bold">N+</div>
                   )}
                   <div
@@ -414,8 +349,11 @@ export default function ChatBot() {
                 >
                   {msg.sender === "user" ? (
                     <User color="white" size={24} />
+                  ) : isStreaming ? (
+                    <div className="text-blue-500 text-2xl font-bold">
+                      N<span className="animate-spin">+</span>
+                    </div>
                   ) : (
-                    // <Image src={botLogo} alt="bot" width={24} height={24} />
                     <div className="text-blue-500 text-2xl font-bold">N+</div>
                   )}
                   <div className="flex flex-col gap-5">
@@ -453,7 +391,6 @@ export default function ChatBot() {
             ))
           ) : (
             <div className="flex flex-col gap-4 items-center justify-center w-full h-[80%] mt-10 overflow-hidden">
-              {/* <Image src={optAiLogo} alt="bot" width={150} height={150} /> */}
               <div className="text-blue-500 text-5xl font-bold">N+</div>
               <TypewriterText />
             </div>

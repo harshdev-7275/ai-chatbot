@@ -97,8 +97,11 @@ export function AppSidebar(): JSX.Element {
   const { today, yesterday, previous7Days } =
     categorizeConversations(conversations);
 
-  const newConversationHandler = (e: React.MouseEvent) => {
-    e.preventDefault();
+  const newConversationHandler = (e?: React.MouseEvent) => {
+    if(e){
+      e.preventDefault();
+    }
+  
     clearConversationId();
     setConversationId(uuidv4());
   };
@@ -107,6 +110,9 @@ export function AppSidebar(): JSX.Element {
 
         const res = await axios.get(`${FetchAllConversation}?user_id=user123`)
         console.log("res", res)
+        if(!conversationId){
+          newConversationHandler()
+        }
         setConversations(res.data)
     }catch(error){
       console.error("error while getting conversations", error)
@@ -122,7 +128,7 @@ getAllConversations()
         {/* Header */}
         <SidebarGroupLabel className="flex items-start justify-items-start mt-2">
           {/* <SidebarGroupLabel className="text-white"></SidebarGroupLabel> */}
-         <h1 className="text-2xl font-bold text-blue-400 ">N+</h1>
+         <h1 className="text-2xl font-bold text-blue-400 ml-10 ">N+</h1>
         </SidebarGroupLabel>
 
         <SidebarMenu className="mt-4">
