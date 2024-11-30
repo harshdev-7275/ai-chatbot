@@ -6,13 +6,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import useConversationStore from "@/store/useConversationStore"; // Import the store
+import useAuthStore from "@/store/useAuthStore"; // Import the store
 
 export default function Login() {
   const router = useRouter();
@@ -22,7 +22,9 @@ export default function Login() {
     password: "",
   });
   const { toast } = useToast();
-  const { isAuthenticated, setIsAuthenticated } = useConversationStore();
+  const { isAuthenticated, setAuthenticated } = useAuthStore();
+
+  console.log("is auth:---", isAuthenticated);
 
   const validCredentials = {
     username: "John.ai@gmail.com",
@@ -48,8 +50,10 @@ export default function Login() {
     ) {
       setTimeout(() => {
         setIsLoading(false);
-        router.push("/"); // Navigate to home page if valid
-        setIsAuthenticated(true);
+        router.push("/");
+
+        // Navigate to home page if valid
+        setAuthenticated(true);
         setFormData({ username: "", password: "" });
       }, 1000); // Add a small delay for better UX
     } else {
@@ -60,10 +64,19 @@ export default function Login() {
           title: "Error",
           description: "Invalid username or password. Please try again..",
         });
-        setIsAuthenticated(false);
+        setAuthenticated(false);
       }, 1000);
     }
   };
+
+  useEffect(() => {
+    console.log("isauth:--", isAuthenticated);
+    if (isAuthenticated) {
+      router.push("/");
+    } else {
+      router.push("/login");
+    }
+  }, [isAuthenticated]);
 
   return (
     <div className="flex items-center justify-center w-screen h-screen  bg-[#131314] ">
