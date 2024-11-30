@@ -1,5 +1,6 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+// store.ts
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface ConversationState {
   conversationId: string | null;
@@ -15,7 +16,7 @@ const useConversationStore = create<ConversationState>()(
       clearConversationId: () => set({ conversationId: null }),
     }),
     {
-      name: 'conversation-store', // Name of the storage (e.g., localStorage key)
+      name: "conversation-store", // Name of the storage (e.g., localStorage key)
     }
   )
 );
