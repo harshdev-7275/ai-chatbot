@@ -100,7 +100,7 @@ export default function ChatBot() {
   const getMessageBySession = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5088/conversation/session?session_id=${conversationId}`
+        `https://nplusdemo.net/conversation/session?session_id=${conversationId}`
       );
       console.log("Backend response:", res.data);
 
