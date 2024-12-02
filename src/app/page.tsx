@@ -1,22 +1,17 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import MessageInput from "@/components/chatbot-components/MessageInput";
 import { Bot, ChevronLeft, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { CustomMarkdownComponents } from "@/components/chatbot-components/CustomMarkdownComponents";
-import botLogo from "@/assets/botLogo.svg";
-import Image from "next/image";
+
 import TypewriterText from "@/components/chatbot-components/TypewriterText";
 import { RespondQuery } from "@/helper/constant";
-import optAiLogo from "@/assets/optAiLogo.png";
 import useConversationStore from "@/store/useConversationStore";
 import { Skeleton } from "@/components/ui/skeleton";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import DynamicCard from "@/components/DynamicCard";
+import MarkdownRenderer from "@/components/chatbot-components/MarkdownRenderer";
 
 interface Message {
   sender: "user" | "bot";
@@ -90,6 +85,7 @@ export default function ChatBot() {
 
   const [messages, setMessages] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const streamingMessageRef = useRef<string>("");
   const [isStreaming, setIsStreaming] = useState(false);
@@ -178,7 +174,7 @@ export default function ChatBot() {
           }
           return updatedMessages;
         });
-        scrollToBottom();
+        throttledScrollToBottom();
       },
       (cards: any) => {
         setMessages((prevMessages) => {
@@ -206,10 +202,30 @@ export default function ChatBot() {
     setIsNewConversation(false); // Set to false after the first message
   };
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  const scrollToBottom = (behavior: ScrollBehavior = "smooth") => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior,
+      });
+    }
   };
-
+  const throttledScrollToBottom = useCallback(
+    throttle(() => {
+      scrollToBottom("smooth");
+    }, 100), // Adjust the delay (100ms) as needed
+    []
+  );
+  useEffect(() => {
+    if (!isStreaming) {
+      scrollToBottom("smooth");
+    }
+  }, [messages.length]);
+  useEffect(() => {
+    if (isStreaming) {
+      throttledScrollToBottom();
+    }
+  }, [messages[messages.length - 1]?.content]);
   const focusInput = () => {
     inputRef.current?.focus();
   };
@@ -296,6 +312,24 @@ export default function ChatBot() {
       onMessageChunk("Error retrieving response.");
     }
   }
+  function throttle(func: (...args: any[]) => void, limit: number) {
+    let lastFunc: NodeJS.Timeout;
+    let lastRan: number;
+    return function (this: any, ...args: any[]) {
+      if (!lastRan) {
+        func.apply(this, args);
+        lastRan = Date.now();
+      } else {
+        clearTimeout(lastFunc);
+        lastFunc = setTimeout(() => {
+          if (Date.now() - lastRan >= limit) {
+            func.apply(this, args);
+            lastRan = Date.now();
+          }
+        }, limit - (Date.now() - lastRan));
+      }
+    };
+  }
 
   return (
     <div className="flex flex-col items-center bg-[#131314] h-full w-full p-4 overflow-hidden">
@@ -375,12 +409,8 @@ export default function ChatBot() {
                           : "bg-[#2F2F2F] text-white text-left"
                       }`}
                     >
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={CustomMarkdownComponents}
-                      >
-                        {msg.content}
-                      </ReactMarkdown>
+                                        <MarkdownRenderer content={msg.content} inline={true} />
+
                     </div>
                     <div>
                       {msg.meta_data?.cards && (
